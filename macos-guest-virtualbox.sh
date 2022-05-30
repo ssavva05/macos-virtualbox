@@ -2,7 +2,7 @@
 # Push-button installer of macOS on VirtualBox
 # (c) myspaghetti, licensed under GPL2.0 or higher
 # url: https://github.com/myspaghetti/macos-virtualbox
-# version 0.99.1.5
+# version 0.99.1.8
 
 #       Dependencies: bash  coreutils  gzip  unzip  wget  xxd  dmg2img
 #  Optional features: tesseract-ocr  tesseract-ocr-eng
@@ -169,7 +169,7 @@ if [[ ! $- =~ i ]]; then  # terminal is not interactive
     echo ""
     tesseract_ocr="$(tesseract --version 2>/dev/null)"
     tesseract_lang="$(tesseract --list-langs 2>/dev/null)"
-    regex_ver='[Tt]esseract 4'  # for zsh quoted regex compatibility
+    regex_ver='[Tt]esseract [45]'  # for zsh quoted regex compatibility
     if [[ ! ( "${tesseract_ocr}" =~ ${regex_ver} ) || -z "${tesseract_lang}" ]]; then
         echo "Running the script on a non-interactive shell requires the following packages:"
         echo -e "    tesseract-ocr >= 4    tesseract-ocr-eng\n"
@@ -371,7 +371,7 @@ if ! dmg2img >/dev/null 2>&1; then
     if [[ -z "$("${PWD%%/}/dmg2img.exe" -d 2>/dev/null)" ]]; then
         if [[ -z "${PWD}" ]]; then echo "PWD environment variable is not set. Exiting."; exit; fi
         echo "Locally installing dmg2img"
-        wget "http://vu1tur.eu.org/tools/dmg2img-1.6.6-win32.zip" \
+        wget "https://web.archive.org/web/20190322013244/http://vu1tur.eu.org/tools/dmg2img-1.6.6-win32.zip" \
              ${wgetargs} \
              --output-document="dmg2img-1.6.6-win32.zip"
         if [[ ! -s dmg2img-1.6.6-win32.zip ]]; then
@@ -716,8 +716,8 @@ if [[ -n "$(
             --audiocodec stac9221 --audio=none 2>&1 >/dev/null
            )" ]]; then
     echo -e "\nError: Could not configure virtual machine \"${vm_name}\"."
-    echo -e "Please execute the stage ${low_contrast_color}configure_vm${default_color} again before resuming the script"
-    echo -e "as described in the documentation.\n"
+    echo -e "If the VM is powered on, power off the virtual machine and resume the script or"
+    echo -e "execute the stage ${low_contrast_color}configure_vm${default_color}\n"
     echo "Exiting."
     exit
 fi
@@ -1598,7 +1598,7 @@ function send_enter() {
 function prompt_lang_utils_terminal() {
     tesseract_ocr="$(tesseract --version 2>/dev/null)"
     tesseract_lang="$(tesseract --list-langs 2>/dev/null)"
-    regex_ver='[Tt]esseract 4'  # for zsh quoted regex compatibility
+    regex_ver='[Tt]esseract [45]'  # for zsh quoted regex compatibility
     if [[ "${tesseract_ocr}" =~ ${regex_ver} && "${tesseract_lang}" =~ eng ]]; then
         echo -e "\n${low_contrast_color}Attempting automated recognition of virtual machine graphical user interface.${default_color}"
         animated_please_wait 30
